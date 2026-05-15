@@ -1,31 +1,67 @@
 import streamlit as st
 import google.generativeai as genai
 
-# Gemini API Key
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-
-model = genai.GenerativeModel("gemini-1.5-flash")
-
-st.set_page_config(page_title="Kisan Saathi")
-
-st.title("🌾 Kisan Saathi")
-st.subheader("AI Farming Assistant")
-
-question = st.text_input(
-    "अपना सवाल पूछें / Ask your farming question"
+# ----------------------------
+# Page Config
+# ----------------------------
+st.set_page_config(
+    page_title="Kisan Saathi",
+    page_icon="🌾",
+    layout="wide"
 )
 
-if question:
+# ----------------------------
+# Gemini API
+# ----------------------------
+API_KEY = st.secrets["GEMINI_API_KEY"]
 
-    prompt = f"""
-    You are an agriculture expert for Indian farmers.
+genai.configure(api_key=API_KEY)
 
-    Answer in simple Hindi.
+model = genai.GenerativeModel("gemini-1.5-flash-latest")
 
-    Farmer Question:
-    {question}
-    """
+# ----------------------------
+# UI
+# ----------------------------
+st.title("🌾 किसान साथी")
+st.subheader("कृषि सलाह सहायक | Agriculture Advisory Assistant")
 
-    response = model.generate_content(prompt)
+st.write("फसल, खाद, सिंचाई, रोग और कीट नियंत्रण से जुड़े सवाल पूछें।")
 
-    st.write(response.text)
+query = st.text_input(
+    "अपना सवाल पूछें / Ask your farming question",
+    placeholder="जैसे: गेहूं में यूरिया कब डालें?"
+)
+
+# ----------------------------
+# Ask Button
+# ----------------------------
+if st.button("उत्तर पाएं"):
+
+    if query.strip():
+
+        prompt = f"""
+        आप किसान साथी हैं।
+
+        भारतीय किसानों को सरल भाषा में कृषि सलाह दें।
+
+        नियम:
+        - जवाब छोटा और सरल हो
+        - यदि सवाल हिंदी में हो तो जवाब हिंदी में दें
+        - यदि सवाल अंग्रेज़ी में हो तो जवाब अंग्रेज़ी में दें
+        - खाद, सिंचाई, रोग, कीट नियंत्रण पर व्यावहारिक सलाह दें
+        - केवल कृषि संबंधी सही सलाह दें
+
+        किसान का सवाल:
+        {query}
+        """
+
+        try:
+            response = model.generate_content(prompt)
+
+            st.success(response.text)
+
+        except Exception as e:
+            st.error(f"त्रुटि: {e}")
+
+    else:
+        st.warning("कृपया सवाल लिखें")
