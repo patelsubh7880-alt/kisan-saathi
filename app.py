@@ -15,7 +15,7 @@ st.subheader("कृषि सलाह सहायक")
 # -------------------
 # API Key
 # -------------------
-API_KEY = st.secrets["AIzaSyBQUjd6JTiYYI466kjGeYhnRFs1FYiTa-0"]
+API_KEY = st.secrets["GEMINI_API_KEY"]
 
 genai.configure(api_key=API_KEY)
 
