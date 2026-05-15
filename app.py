@@ -1,58 +1,54 @@
 import streamlit as st
 import google.generativeai as genai
 
-# ----------------------------
-# Page Config
-# ----------------------------
+# -------------------
+# Page
+# -------------------
 st.set_page_config(
     page_title="Kisan Saathi",
-    page_icon="🌾",
-    layout="wide"
+    page_icon="🌾"
 )
 
-# ----------------------------
-# Gemini API
-# ----------------------------
+st.title("🌾 किसान साथी")
+st.subheader("कृषि सलाह सहायक")
+
+# -------------------
+# API Key
+# -------------------
 API_KEY = st.secrets["GEMINI_API_KEY"]
 
 genai.configure(api_key=API_KEY)
 
-model = genai.GenerativeModel("gemini-1.5-flash-latest")
+# Stable model
+model = genai.GenerativeModel("gemini-1.5-flash")
 
-# ----------------------------
-# UI
-# ----------------------------
-st.title("🌾 किसान साथी")
-st.subheader("कृषि सलाह सहायक | Agriculture Advisory Assistant")
-
-st.write("फसल, खाद, सिंचाई, रोग और कीट नियंत्रण से जुड़े सवाल पूछें।")
-
+# -------------------
+# Input
+# -------------------
 query = st.text_input(
-    "अपना सवाल पूछें / Ask your farming question",
-    placeholder="जैसे: गेहूं में यूरिया कब डालें?"
+    "अपना सवाल पूछें",
+    placeholder="गेहूं में खाद कब डालें?"
 )
 
-# ----------------------------
-# Ask Button
-# ----------------------------
+# -------------------
+# Ask
+# -------------------
 if st.button("उत्तर पाएं"):
 
-    if query.strip():
+    if query:
 
         prompt = f"""
         आप किसान साथी हैं।
 
-        भारतीय किसानों को सरल भाषा में कृषि सलाह दें।
+        भारतीय किसानों को सरल भाषा में जवाब दें।
+
+        सवाल:
+        {query}
 
         नियम:
-        - जवाब छोटा और सरल हो
-        - यदि सवाल हिंदी में हो तो जवाब हिंदी में दें
-        - यदि सवाल अंग्रेज़ी में हो तो जवाब अंग्रेज़ी में दें
-        - खाद, सिंचाई, रोग, कीट नियंत्रण पर व्यावहारिक सलाह दें
-        - केवल कृषि संबंधी सही सलाह दें
-
-        किसान का सवाल:
-        {query}
+        - छोटा जवाब
+        - हिंदी सवाल → हिंदी जवाब
+        - कृषि सलाह सही हो
         """
 
         try:
